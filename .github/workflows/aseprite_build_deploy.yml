@@ -91,6 +91,12 @@ jobs:
           curl -o Aseprite-source.zip -L ${{ needs.check-version.outputs.download_url }}
           unzip Aseprite-source.zip -d aseprite
           mkdir -p aseprite/build
+      - name: Fix Skia paths
+        run: |
+          # 确保 icudtl.dat 存在
+          curl -o skia/third_party/externals/icu/flutter/icudtl.dat -L https://github.com/google/skia/blob/main/third_party/externals/icu/flutter/icudtl.dat
+          # 确保 libjpeg-turbo 路径正确
+          ln -s "$(pwd)/skia/third_party/externals/libjpeg-turbo" "$(pwd)/aseprite/skia/third_party/externals/libjpeg-turbo"
       - name: (Windows) Set architecture for the produced binary
         if: matrix.os == 'windows-latest'
         shell: cmd
